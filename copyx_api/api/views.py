@@ -19,7 +19,7 @@ class UserRegistrationView(APIView):
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
-                'access': str(refresh.access_tokenn),
+                'access': str(refresh.access_token),
                 'user': UserProfileSerializer(user).data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -32,7 +32,7 @@ class UserLoginView(APIView):
             refresh = RefreshToken.for_user(user)
             return Response({
                 'refresh': str(refresh),
-                'access': str(refresh.access_tokenn),
+                'access': str(refresh.access_token),
                 'user': UserProfileSerializer(user).data
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
