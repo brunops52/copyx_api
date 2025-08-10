@@ -4,12 +4,19 @@ from ..models import User
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return value.lower()
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'first_name', 'last_name')
 
     def create(self, validated_data):
+        validated_data['email'] = validated_data['email'].lower()
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
