@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -72,18 +73,23 @@ class TweetDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = TweetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-def LikeTweetView(APIView):
-    permissions_classes = [permissions.IsAuthenticated]
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied("Você não tem permissão para esta ação.")
+        instance.delete()
 
-    def post(self, request, pk):
-        tweet = get_object_or_404(Tweet, pk=pk)
-        if tweet.likes.filter(id=request.user.id).exists():
-            tweet.likes.remove(request.user)
-            action = 'unliked'
-        else:
-            tweet.likes.add(request.user)
-            action = 'liked'
-        return Response({'status': f'Tweet {action}.'})
+    def LikeTweetView(APIView):
+        permissions_classes = [permissions.IsAuthenticated]
+
+        def post(self, request, pk):
+            tweet = get_object_or_404(Tweet, pk=pk)
+            if tweet.likes.filter(id=request.user.id).exists():
+                tweet.likes.remove(request.user)
+                action = 'unliked'
+            else:
+                tweet.likes.add(request.user)
+                action = 'liked'
+            return Response({'status': f'Tweet {action}.'})
     
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
@@ -101,6 +107,11 @@ class CommentDetailView(generics.RetrieveDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied("Você não tem permissão para esta ação.")
+        instance.delete()
 
     def get_object(self):
         comment = get_object_or_404(Comment, pk=self.kwargs['pk'], tweet__pk=self.kwargs['tweet_pk'])
