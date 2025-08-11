@@ -5,7 +5,7 @@ from ..models import Tweet
 from ..models import Bookmark
 
 class TweetSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(reas_only=True)
+    user = UserProfileSerializer(read_only=True)
     like_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
 

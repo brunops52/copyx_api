@@ -78,7 +78,7 @@ class TweetDetailView(generics.RetrieveDestroyAPIView):
             raise PermissionDenied("Você não tem permissão para esta ação.")
         instance.delete()
 
-    def LikeTweetView(APIView):
+class LikeTweetView(APIView):
         permissions_classes = [permissions.IsAuthenticated]
 
         def post(self, request, pk):
