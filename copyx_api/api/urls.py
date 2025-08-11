@@ -6,6 +6,10 @@ from .views import (
     TweetListCreateView,
     TweetDetailView,
     LikeTweetView,
+    CommentListCreateView,
+    CommentDetailView,
+    BookmarkListView,
+    BookmarkToggleView
     )
 
 urlpatterns = [
@@ -15,4 +19,8 @@ urlpatterns = [
     path('tweets/', TweetListCreateView.as_view(), name='tweet-list'),
     path('tweets/<int:pk>/', TweetDetailView.as_view(), name='tweet-detail'),
     path('tweets/<int:pk>like/', LikeTweetView.as_view(), name='tweet-like'),
+    path('tweets/<int:tweet_pk>/comments/', CommentListCreateView.as_view(), name='comment-list'),
+    path('tweets/<int:tweet_pk>/comments/<int:pk>/', CommentDetailView.as_view(), name='comment-detail'),
+    path('bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
+    path('tweets/<int:pk>/bookmark/', BookmarkToggleView.as_view(), name='tweet-bookmark'),
 ]
