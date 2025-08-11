@@ -62,7 +62,7 @@ class UserProfileView(APIView):
     
 class TweetListCreateView(generics.ListCreateAPIView):
     queryset = Tweet.objects.all()
-    serializers_class = TweetSerializer
+    serializer_class = TweetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
@@ -79,17 +79,17 @@ class TweetDetailView(generics.RetrieveDestroyAPIView):
         instance.delete()
 
 class LikeTweetView(APIView):
-        permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
-        def post(self, request, pk):
-            tweet = get_object_or_404(Tweet, pk=pk)
-            if tweet.likes.filter(id=request.user.id).exists():
-                tweet.likes.remove(request.user)
-                action = 'unliked'
-            else:
-                tweet.likes.add(request.user)
-                action = 'liked'
-            return Response({'status': f'Tweet {action}.'})
+    def post(self, request, pk):
+        tweet = get_object_or_404(Tweet, pk=pk)
+        if tweet.likes.filter(id=request.user.id).exists():
+            tweet.likes.remove(request.user)
+            action = 'unliked'
+        else:
+            tweet.likes.add(request.user)
+            action = 'liked'
+        return Response({'status': f'Tweet {action}.'})
     
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
