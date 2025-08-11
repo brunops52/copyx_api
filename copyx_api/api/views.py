@@ -4,12 +4,16 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics, permissions
 from .serializers import (
     UserRegistrationSerializer, 
     UserLoginSerializer,
-    UserProfileSerializer
+    UserProfileSerializer,
+    TweetSerializer,
+    CommentSerializer,
+    BookmarkSerializer
 )
-from .models import User
+from .models import User, Tweet, Comment, Bookmark
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -54,3 +58,31 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class TweetListCreateView(generics.ListCreateAPIView):
+    queryset = Tweet.objects.all()
+    serializers_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class TweetDetailView(generics.RetrieveDestroyAPIView):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+def LikeTweetView(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        tweet = get_object_or_404(Tweet, pk=pk)
+        if tweet.likes.filter(id=request.user.id).exists():
+            tweet.likes.remove(request.user)
+            action = 'unliked'
+        else:
+            tweet.likes.add(request.user)
+            action = 'liked'
+        return Response({'status': f'Tweet {action}.'})
+    
+
