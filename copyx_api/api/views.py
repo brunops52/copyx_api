@@ -12,9 +12,10 @@ from .serializers import (
     UserProfileSerializer,
     TweetSerializer,
     CommentSerializer,
-    BookmarkSerializer
+    BookmarkSerializer,
+    NotificationSerializer
 )
-from .models import User, Tweet, Comment, Bookmark
+from .models import User, Tweet, Comment, Bookmark, Notification
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -137,6 +138,13 @@ class BookmarkToggleView(APIView):
             action = 'added'
 
         return Response({'status': f'Bookmark {action}.'})
+    
+class NotificationListView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
 
     
 
