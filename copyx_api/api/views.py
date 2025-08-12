@@ -1,15 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics, permissions
 from .serializers import (
     UserRegistrationSerializer, 
     UserLoginSerializer,
-    UserProfileSerializer
+    UserProfileSerializer,
+    TweetSerializer,
+    CommentSerializer,
+    BookmarkSerializer
 )
-from .models import User
+from .models import User, Tweet, Comment, Bookmark
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -54,3 +59,84 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class TweetListCreateView(generics.ListCreateAPIView):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class TweetDetailView(generics.RetrieveDestroyAPIView):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied("Você não tem permissão para esta ação.")
+        instance.delete()
+
+class LikeTweetView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        tweet = get_object_or_404(Tweet, pk=pk)
+        if tweet.likes.filter(id=request.user.id).exists():
+            tweet.likes.remove(request.user)
+            action = 'unliked'
+        else:
+            tweet.likes.add(request.user)
+            action = 'liked'
+        return Response({'status': f'Tweet {action}.'})
+    
+class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        tweet_pk = self.kwargs['tweet_pk']
+        return Comment.objects.filter(tweet__pk=tweet_pk)
+    
+    def perform_create(self, serializer):
+        tweet = get_object_or_404(Tweet, pk=self.kwargs['tweet_pk'])
+        serializer.save(user=self.request.user, tweet=tweet)
+
+class CommentDetailView(generics.RetrieveDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
+            raise PermissionDenied("Você não tem permissão para esta ação.")
+        instance.delete()
+
+    def get_object(self):
+        comment = get_object_or_404(Comment, pk=self.kwargs['pk'], tweet__pk=self.kwargs['tweet_pk'])
+        return comment      
+    
+class BookmarkListView(generics.ListAPIView):
+    serializer_class = BookmarkSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Bookmark.objects.filter(user=self.request.user)
+    
+class BookmarkToggleView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        tweet = get_object_or_404(Tweet, pk=pk)
+        bookmark, created = Bookmark.objects.get_or_create(user=request.user, tweet=tweet)
+        if not created:
+            bookmark.delete()
+            action = 'removed'
+        else:
+            action = 'added'
+
+        return Response({'status': f'Bookmark {action}.'})
+
+    
+
