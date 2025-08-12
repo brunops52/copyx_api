@@ -84,7 +84,7 @@ class LikeTweetView(APIView):
 
     def post(self, request, pk):
         tweet = get_object_or_404(Tweet, pk=pk)
-        if tweet.likes.filter(id=request.user.id).exists():
+        if request.user in tweet.likes.all():
             tweet.likes.remove(request.user)
             action = 'unliked'
         else:
