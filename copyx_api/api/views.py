@@ -13,7 +13,8 @@ from .serializers import (
     TweetSerializer,
     CommentSerializer,
     BookmarkSerializer,
-    NotificationSerializer
+    NotificationSerializer,
+    FollowSerializer
 )
 from .models import User, Tweet, Comment, Bookmark, Notification
 
@@ -146,5 +147,39 @@ class NotificationListView(generics.ListAPIView):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
 
+class FollowToggleView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        user_to_follow = get_object_or_404(User, pk=pk)
+        
+        if request.user == user_to_follow:
+            return Response(
+                {'error': 'Você não pode seguir a si mesmo.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if request.user.is_following(user_to_follow):
+            request.user.unfollow(user_to_follow)
+            action = 'unfollowed'
+        else:
+            request.user.follow(user_to_follow)
+            action = 'followed'
+
+        return Response({
+            'status': f"Successfully {action} {user_to_follow.username}.",
+            'is_following': request.user.is_following(user_to_follow),
+            'followers_count': user_to_follow.followers_count,
+            'following_count': request.user.following_count
+        })
     
+class userRelationsView(APIView):
+    serializer_class = FollowSerializer
+    queryset = User.objects.all()
+
+    def get_object(self):
+        user = get_object_or_404(User, pk=self.kwargs['pk'])
+        return user
+
+
 

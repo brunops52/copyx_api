@@ -1,4 +1,4 @@
-from .user_serializer import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
+from .user_serializer import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, FollowSerializer
 from .tweet_serializer import TweetSerializer
 from .comment_serializer import CommentSerializer
 from .bookmark_serializer import BookmarkSerializer
