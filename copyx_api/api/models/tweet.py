@@ -8,6 +8,7 @@ class Tweet(models.Model):
     image = models.ImageField(upload_to='tweets/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_tweets', blank=True)
+    mentions = models.ManyToManyField(User, related_name='mentioned_in_tweets', blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -20,4 +21,7 @@ class Tweet(models.Model):
         return self.lijes.count()
     
     
-    
+    def extract_mentions(self):
+        import re
+        usernames = re.findall(r'@(\w+)', self.content)
+        return User.objects.filter(username__in=usernames)
