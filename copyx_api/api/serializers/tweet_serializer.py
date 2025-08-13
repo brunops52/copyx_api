@@ -8,6 +8,7 @@ class TweetSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer(read_only=True)
     like_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
+    mentioned_users = serializers.SerializerMethodField()
 
     class Meta:
         model = Tweet
@@ -25,3 +26,6 @@ class TweetSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return Bookmark.objects.filter(user=request.user, tweet=obj).exists()
         return False
+
+    def get_mentioned_users(self, obj):
+        return UserProfileSerializer(obj.mentions.all(), many=True).data
