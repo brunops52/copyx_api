@@ -9,7 +9,8 @@ from .views import (
     CommentListCreateView,
     CommentDetailView,
     BookmarkListView,
-    BookmarkToggleView
+    BookmarkToggleView,
+    NotificationListView,
     )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path('tweets/<int:tweet_pk>/comments/<int:pk>/', CommentDetailView.as_view(), name='comment-detail'),
     path('bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
     path('tweets/<int:pk>/bookmark/', BookmarkToggleView.as_view(), name='tweet-bookmark'),
+    path('notifications/', NotificationListView.as_view(), name='notification-list'),
 ]

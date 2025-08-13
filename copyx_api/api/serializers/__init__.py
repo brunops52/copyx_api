@@ -2,3 +2,4 @@ from .user_serializer import UserRegistrationSerializer, UserLoginSerializer, Us
 from .tweet_serializer import TweetSerializer
 from .comment_serializer import CommentSerializer
 from .bookmark_serializer import BookmarkSerializer
+from .notification_serializer import NotificationSerializer

@@ -12,9 +12,10 @@ from .serializers import (
     UserProfileSerializer,
     TweetSerializer,
     CommentSerializer,
-    BookmarkSerializer
+    BookmarkSerializer,
+    NotificationSerializer
 )
-from .models import User, Tweet, Comment, Bookmark
+from .models import User, Tweet, Comment, Bookmark, Notification
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -83,7 +84,7 @@ class LikeTweetView(APIView):
 
     def post(self, request, pk):
         tweet = get_object_or_404(Tweet, pk=pk)
-        if tweet.likes.filter(id=request.user.id).exists():
+        if request.user in tweet.likes.all():
             tweet.likes.remove(request.user)
             action = 'unliked'
         else:
@@ -137,6 +138,13 @@ class BookmarkToggleView(APIView):
             action = 'added'
 
         return Response({'status': f'Bookmark {action}.'})
+    
+class NotificationListView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
 
     
 
