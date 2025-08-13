@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, permissions
+from django.db.models import Q
 from .serializers import (
     UserRegistrationSerializer, 
     UserLoginSerializer,
@@ -181,5 +182,16 @@ class userRelationsView(generics.RetrieveAPIView):
         user = get_object_or_404(User, pk=self.kwargs['pk'])
         return user
     
+class TimelineView(generics.ListAPIView):
+    serializer_class = TweetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        following_ids = self.request.user.following.values_list('id', flat=True)
+        following_ids = list(following_ids) + [self.request.user.id]
+
+        return Tweet.objects.filter(
+            user__id__in=following_ids
+        ).order_by('-created_at')
 
 
