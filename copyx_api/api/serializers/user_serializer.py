@@ -67,8 +67,8 @@ class FollowSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'followers_count', 'following_count', 'is_following' ]
 
-        def get_is_following(self, obj):
-            request = self.context.get('request')
-            if request and request.user.is_authenticated:
-                return request.user.is_following(obj)
-            return False
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return request.user.is_following(obj)
+        return False

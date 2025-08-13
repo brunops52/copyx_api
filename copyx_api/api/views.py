@@ -173,13 +173,13 @@ class FollowToggleView(APIView):
             'following_count': request.user.following_count
         })
     
-class userRelationsView(APIView):
+class userRelationsView(generics.RetrieveAPIView):
     serializer_class = FollowSerializer
     queryset = User.objects.all()
 
     def get_object(self):
         user = get_object_or_404(User, pk=self.kwargs['pk'])
         return user
-
+    
 
 
