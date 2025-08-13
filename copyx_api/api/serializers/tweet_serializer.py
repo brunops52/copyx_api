@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .user_serializer import UserProfileSerializer
+from .hashtag_serializer import HashtagSerializer
 from ..models import Tweet
 from ..models import Bookmark
 
@@ -9,6 +10,7 @@ class TweetSerializer(serializers.ModelSerializer):
     like_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
     mentioned_users = serializers.SerializerMethodField()
+    hahstags = HashtagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Tweet
