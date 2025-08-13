@@ -1,7 +1,7 @@
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 
-from .models import Notification, Tweet, User, Comment
+from .models import Notification, Tweet, User, Comment, Hashtag
 
 @receiver(m2m_changed, sender=Tweet.likes.through)
 def create_like_notification(sender, instance, action, pk_set, **kwargs):
@@ -36,3 +36,24 @@ def create_comment_notification(sender, instance, created, **kwargs):
             notification_type='comment',
             tweet=instance.tweet
         )
+
+@receiver(post_save, sender=Tweet)
+def create_mention_notifications(sender, instance, created, **kwargs):
+    if created:
+        mentioned_users = instance.extract_mentions()
+        instance.mentions.set(mentioned_users)
+        for user in mentioned_users:
+            if user != instance.user:
+                Notification.objects.create(
+                    user=user,
+                    actor=instance.user,
+                    notification_type='mention',
+                    tweet=instance
+                )
+
+@receiver(post_save, sender=Tweet)
+def link_hashtags(sender, instance, created, **kwargs):
+    if created:
+        for tag_name in instance.extract_hashtags():
+            hashtag, _ = Hashtag.objects.get_or_create(name=tag_name)
+            hashtag.tweets.add(instance)

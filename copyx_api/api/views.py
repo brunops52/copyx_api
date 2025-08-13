@@ -194,4 +194,11 @@ class TimelineView(generics.ListAPIView):
             user__id__in=following_ids
         ).order_by('-created_at')
 
+class HashtagTweetListView(generics.ListAPIView):
+    serializer_class = TweetSerializer
 
+    def get_queryset(self):
+        hashtag_name = self.kwargs['hashtag']
+        return Tweet.objects.filter(
+            hashtag__name__iexact=hashtag_name
+        ).order_by('-created_at')

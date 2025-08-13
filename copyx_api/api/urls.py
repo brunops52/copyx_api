@@ -13,7 +13,8 @@ from .views import (
     NotificationListView,
     FollowToggleView,
     userRelationsView,
-    TimelineView
+    TimelineView,
+    HashtagTweetListView
     )
 
 urlpatterns = [
@@ -31,5 +32,6 @@ urlpatterns = [
     path('users/<int:pk>/follow/', FollowToggleView.as_view(), name='follow-toggle'),
     path('users/<int:pk>/relationships/', userRelationsView.as_view(), name='user-relarionships'),
     path('timeline/', TimelineView.as_view(), name='timeline'),
+    path('hashtags/<str:hashtag>/', HashtagTweetListView.as_view(), name='hashtag-tweets'),
 
 ]
