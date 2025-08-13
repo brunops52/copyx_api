@@ -11,6 +11,8 @@ from .views import (
     BookmarkListView,
     BookmarkToggleView,
     NotificationListView,
+    FollowToggleView,
+    userRelationsView
     )
 
 urlpatterns = [
@@ -25,4 +27,7 @@ urlpatterns = [
     path('bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
     path('tweets/<int:pk>/bookmark/', BookmarkToggleView.as_view(), name='tweet-bookmark'),
     path('notifications/', NotificationListView.as_view(), name='notification-list'),
+    path('users/<int:pk>/follow/', FollowToggleView.as_view(), name='follow-toggle'),
+    path('users/<int:pk>/relationships/', userRelationsView.as_view(), name='user-relarionships'),
+
 ]
