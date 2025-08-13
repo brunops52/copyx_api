@@ -36,3 +36,18 @@ def create_comment_notification(sender, instance, created, **kwargs):
             notification_type='comment',
             tweet=instance.tweet
         )
+
+@receiver(post_save, sender=Tweet)
+def create_mention_notifications(sender, instance, created, **kwargs):
+    if created:
+        mentioned_users = instance.extract_mentions()
+        instance.mentions.set(mentioned_users)
+        for user in mentioned_users:
+            if user != instance.user:
+                Notification.objects.create(
+                    user=user,
+                    actor=instance.user,
+                    notification_type='mention',
+                    tweet=instance
+                )
+
