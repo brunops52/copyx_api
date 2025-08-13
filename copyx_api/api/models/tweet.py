@@ -25,3 +25,8 @@ class Tweet(models.Model):
         import re
         usernames = re.findall(r'@(\w+)', self.content)
         return User.objects.filter(username__in=usernames)
+    
+    def extract_hashtags(self):
+        import re
+        hashtags = re.findall(r'#(\w+)', self.content.lower())
+        return list(set(hashtags))
