@@ -18,3 +18,16 @@ class User(AbstractUser):
     @property
     def following_count(self):
         return self.following.count()
+    
+    def follow(self, user_to_follow):
+        if self != user_to_follow:
+            self.following.add(user_to_follow)
+            return True
+        return False
+    
+    def unfollow(self, user_to_unfollow):
+        self.following.remove(user_to_unfollow)
+
+    def is_following(self, user):
+        return self.following.filter(pk=user.pk).exists()
+    
