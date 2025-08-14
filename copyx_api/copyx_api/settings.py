@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-w6e%xrc*bu2ki#3(ax#59av4nk+sb^_#7#i4&y1-u#8q^pfylc"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['brunops52.pythonanywhere.com','Brunops52.pythonanywhere.com' ,'localhost']
 
 
 # Application definition
@@ -79,7 +79,7 @@ WSGI_APPLICATION = "copyx_api.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
