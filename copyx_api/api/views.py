@@ -265,3 +265,19 @@ class GlobalSearchView(generics.ListAPIView):
                 serializer = HashtagSerializer(queryset, many=True)
 
             return Response(serializer.data)
+        
+class FollowersListView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        user = get_object_or_404(User, pk=self.kwargs['pk'])
+        return user.followers.all()
+    
+class FollowingListView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        user = get_object_or_404(User, pk=self.kwargs['pk'])
+        return user.following.all()
