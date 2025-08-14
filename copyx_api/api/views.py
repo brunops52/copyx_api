@@ -248,7 +248,7 @@ class GlobalSearchView(generics.ListAPIView):
         if isinstance(queryset, dict):
             users = UserProfileSerializer(queryset['users'], many=True).data
             tweets = TweetSerializer(queryset['tweets'], many=True, context={'request': request}).data
-            hashtags = HashtagSerializer(queryset['hashtag'], many=True).data
+            hashtags = HashtagSerializer(queryset['hashtags'], many=True).data
 
             return Response({
                 'users': users,
