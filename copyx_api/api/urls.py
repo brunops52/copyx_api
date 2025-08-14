@@ -14,7 +14,8 @@ from .views import (
     FollowToggleView,
     userRelationsView,
     TimelineView,
-    HashtagTweetListView
+    HashtagTweetListView,
+    GlobalSearchView
     )
 
 urlpatterns = [
@@ -33,5 +34,6 @@ urlpatterns = [
     path('users/<int:pk>/relationships/', userRelationsView.as_view(), name='user-relarionships'),
     path('timeline/', TimelineView.as_view(), name='timeline'),
     path('hashtags/<str:hashtag>/', HashtagTweetListView.as_view(), name='hashtag-tweets'),
+    path('search/', GlobalSearchView.as_view(), name='global-search')
 
 ]

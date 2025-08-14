@@ -15,9 +15,10 @@ from .serializers import (
     CommentSerializer,
     BookmarkSerializer,
     NotificationSerializer,
-    FollowSerializer
+    FollowSerializer,
+    HashtagSerializer
 )
-from .models import User, Tweet, Comment, Bookmark, Notification
+from .models import User, Tweet, Comment, Bookmark, Notification, Hashtag
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -202,3 +203,65 @@ class HashtagTweetListView(generics.ListAPIView):
         return Tweet.objects.filter(
             hashtag__name__iexact=hashtag_name
         ).order_by('-created_at')
+    
+class GlobalSearchView(generics.ListAPIView):
+    serializer_class = None
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        if not query:
+            return []
+        
+        if self.request.query_params.get('type') == 'users':
+            return User.objects.filter(
+                Q(username__icontains=query) |
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query)
+            )
+        
+        elif self.request.query_params.get('type') == 'tweets':
+            return Tweet.objects.filter(
+                Q(content__icontains=query)
+            )
+        
+        elif self.request.query_params.get('type') == 'hashtags':
+            return Hashtag.objects.filter(
+                Q(name__icontains=query)
+            )
+        
+        else:
+            return {
+                'users': User.objects.filter(
+                    Q(username__icontains=query) |
+                    Q(first_name__icontains=query) |
+                    Q(last_name__icontains=query))[:5],
+                'tweets': Tweet.objects.filter(
+                    Q(content__icontains=query))[:5],
+                'hashtags': Hashtag.objects.filter(
+                    Q(name__icontains=query))[:5]
+            }
+        
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if isinstance(queryset, dict):
+            users = UserProfileSerializer(queryset['users'], many=True).data
+            tweets = TweetSerializer(queryset['tweets'], many=True, context={'request': request}).data
+            hashtags = HashtagSerializer(queryset['hashtags'], many=True).data
+
+            return Response({
+                'users': users,
+                'tweets': tweets,
+                'hashtag': hashtags
+            })
+        
+        else:
+            if self.request.query_params.get('type') == 'users':
+                serializer = UserProfileSerializer(queryset, many=True)
+            elif self.request.query_params.get('type') == 'tweets':
+                serializer = TweetSerializer(queryset, many=True, context={'request': request})
+            elif self.request.query_params.get('type') == 'hashtags':
+                serializer = HashtagSerializer(queryset, many=True)
+
+            return Response(serializer.data)
