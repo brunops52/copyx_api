@@ -29,7 +29,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['brunops52.pythonanywhere.com','Brunops52.pythonanywhere.com' ,'localhost', '127.0.0.1:8000', '127.0.0.1', 'https://copyx.vercel.app/']
 
 CORS_ALLOWED_ORIGINS = [
-    "https://copyx.vercel.app/",
+    "https://copyx.vercel.app",
     "http://localhost:5173"  
 ]
 
