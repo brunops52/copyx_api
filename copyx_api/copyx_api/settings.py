@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['brunops52.pythonanywhere.com','Brunops52.pythonanywhere.com' ,
 
 CORS_ALLOWED_ORIGINS = [
     "https://copyx.vercel.app/",
-    "http://localhost:3000"  
+    "http://localhost:5173"  
 ]
 
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'api.apps.ApiConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "copyx_api.urls"
