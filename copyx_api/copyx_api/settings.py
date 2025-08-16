@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['brunops52.pythonanywhere.com','Brunops52.pythonanywhere.com' ,
 
 CORS_ALLOWED_ORIGINS = [
     "https://copyx.vercel.app/",
-    "http://localhost:3000"  
+    "http://localhost:5173"  
 ]
 
 
