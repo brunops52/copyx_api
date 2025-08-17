@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    CheckFollowingView,
     UserRegistrationView,
     UserLoginView,
     UserProfileView,
@@ -44,4 +45,5 @@ urlpatterns = [
     path('users/<int:pk>/following/', FollowingListView.as_view(), name='user-following'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/<int:pk>/profile/', UserProfileDetailView.as_view(), name='user-profile-detail'),
+    path('users/<int:user_id>/check-following/', CheckFollowingView.as_view(), name='check-following'),
 ]

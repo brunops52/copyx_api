@@ -296,3 +296,11 @@ class UserProfileDetailView(generics.RetrieveAPIView):
     def get_object(self):
         user_id = self.kwargs.get('pk')
         return get_object_or_404(User, pk=user_id)
+
+class CheckFollowingView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, user_id):
+        user_to_check = get_object_or_404(User, pk=user_id)
+        is_following = request.user.is_following(user_to_check)
+        return Response({'is_following': is_following}, status=status.HTTP_200_OK)
