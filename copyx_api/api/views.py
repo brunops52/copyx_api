@@ -72,6 +72,11 @@ class TweetListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
 class TweetDetailView(generics.RetrieveDestroyAPIView):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer

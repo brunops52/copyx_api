@@ -9,6 +9,7 @@ class TweetSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer(read_only=True)
     like_count = serializers.ReadOnlyField()
     is_liked = serializers.SerializerMethodField()
+    is_bookmarked = serializers.SerializerMethodField()
     mentioned_users = serializers.SerializerMethodField()
     hahstags = HashtagSerializer(many=True, read_only=True)
 
@@ -26,7 +27,10 @@ class TweetSerializer(serializers.ModelSerializer):
     def get_is_bookmarked(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Bookmark.objects.filter(user=request.user, tweet=obj).exists()
+            return Bookmark.objects.filter(
+                user=request.user, 
+                tweet=obj
+            ).exists()
         return False
 
     def get_mentioned_users(self, obj):
