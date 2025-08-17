@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from ..models import User
+from ..models import User, Tweet
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -72,3 +72,4 @@ class FollowSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return request.user.is_following(obj)
         return False
+    
