@@ -16,7 +16,8 @@ from .serializers import (
     BookmarkSerializer,
     NotificationSerializer,
     FollowSerializer,
-    HashtagSerializer
+    HashtagSerializer,
+    UserProfileDetailSerializer
 )
 from .models import User, Tweet, Comment, Bookmark, Notification, Hashtag
 
@@ -286,3 +287,12 @@ class FollowingListView(generics.ListAPIView):
     def get_queryset(self):
         user = get_object_or_404(User, pk=self.kwargs['pk'])
         return user.following.all()
+
+class UserProfileDetailView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileDetailSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def get_object(self):
+        user_id = self.kwargs.get('pk')
+        return get_object_or_404(User, pk=user_id)

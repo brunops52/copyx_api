@@ -17,7 +17,8 @@ from .views import (
     HashtagTweetListView,
     GlobalSearchView,
     FollowersListView,
-    FollowingListView
+    FollowingListView,
+    UserProfileDetailView
     )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -42,4 +43,5 @@ urlpatterns = [
     path('users/<int:pk>/followers/', FollowersListView.as_view(), name='user-followers'),
     path('users/<int:pk>/following/', FollowingListView.as_view(), name='user-following'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('users/<int:pk>/profile/', UserProfileDetailView.as_view(), name='user-profile-detail'),
 ]
