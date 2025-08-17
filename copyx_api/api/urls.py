@@ -19,6 +19,8 @@ from .views import (
     FollowersListView,
     FollowingListView
     )
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -39,4 +41,5 @@ urlpatterns = [
     path('search/', GlobalSearchView.as_view(), name='global-search'),
     path('users/<int:pk>/followers/', FollowersListView.as_view(), name='user-followers'),
     path('users/<int:pk>/following/', FollowingListView.as_view(), name='user-following'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
