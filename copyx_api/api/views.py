@@ -17,7 +17,8 @@ from .serializers import (
     NotificationSerializer,
     FollowSerializer,
     HashtagSerializer,
-    UserProfileDetailSerializer
+    UserProfileDetailSerializer,
+    ChangePasswordSerializer
 )
 from .models import User, Tweet, Comment, Bookmark, Notification, Hashtag
 
@@ -304,3 +305,22 @@ class CheckFollowingView(APIView):
         user_to_check = get_object_or_404(User, pk=user_id)
         is_following = request.user.is_following(user_to_check)
         return Response({'is_following': is_following}, status=status.HTTP_200_OK)
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        serializer = ChangePasswordSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Senha alterada com sucesso."},
+                status=status.HTTP_200_OK
+            )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

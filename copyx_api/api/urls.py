@@ -19,7 +19,8 @@ from .views import (
     GlobalSearchView,
     FollowersListView,
     FollowingListView,
-    UserProfileDetailView
+    UserProfileDetailView,
+    ChangePasswordView
     )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -46,4 +47,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/<int:pk>/profile/', UserProfileDetailView.as_view(), name='user-profile-detail'),
     path('users/<int:user_id>/check-following/', CheckFollowingView.as_view(), name='check-following'),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 ]
