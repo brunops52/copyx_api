@@ -8,6 +8,44 @@ Base URL principal:
 https://brunops52.pythonanywhere.com/api/
 ```
 
+# Setup
+
+---
+
+Clone the repository
+```http
+git clone git@github.com:brunops52/copyx_api.git
+```
+```http
+cd copyx_api/
+```
+
+Create the virtual environment
+```http
+python3 -m venv .venv
+```
+
+Activate the virtual environment
+```http
+source .venv/bin/activate
+```
+
+Install dependencies
+```http
+pip install -r copyx_api/requirements.txt
+```
+
+Execute the database migrations.
+```http
+python copyx_api/manage.py migrate
+```
+
+Start the development server.
+```http
+python copyx_api/manage.py runserver
+```
+
+
 ---
 
 ## Autenticação
